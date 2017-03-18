@@ -1,5 +1,16 @@
 import $ from 'jquery';
-import Block from './Block';
+import BlockEditor from './BlockEditor';
+import ColorPalette from './ColorPalette';
 
-var block = new Block();
-block.printHello();
+const numBlocksWide = 4;
+const numBlocksHigh = 4;
+
+window.onload = function() {
+  const blockCanvas = document.getElementById('block_canvas');
+  //const paletteCanvas = document.getElementById('palette_canvas');
+
+  var blockEditor = new BlockEditor(blockCanvas, numBlocksWide, numBlocksHigh);
+  blockEditor.setup();
+  //paper.setup($('#block_canvas'));
+  //paper.setup(document.getElementById('block_canvas'));
+}
