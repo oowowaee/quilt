@@ -4,7 +4,7 @@ import Grid from './Grid';
 import paper from 'paper';
 import {FILLCOLOR, EMPTYCOLOR} from './Constants';
 
-const offset = 1;
+const offset = 0;
 const hitOptions = {
   segments: true,
   stroke: true,
@@ -20,7 +20,10 @@ export default class {
     this.width = canvas.offsetWidth;
     this.height = canvas.offsetHeight;
     this.palette = palette;
-    this.squareWidth = this.width / widthInBlocks;
+    this.squareWidth = Math.floor(this.width / widthInBlocks);
+    if (this.squareWidth % 2 != 0) {
+      this.squareWidth++;
+    }
   }
 
   setup() {
@@ -59,14 +62,38 @@ export default class {
   }
 
   fillSquare(e) {
-    var hitResult = paper.project.hitTest(e.point, hitOptions);
+    let hitResult = paper.project.hitTest(e.point, hitOptions);
+    let newColor;
+    let item = hitResult.item;
+    let fillAll = this.fillAll(e.point, item);
 
-    if (hitResult.item.currentColor != this.palette.currentFillColor()) {
-      hitResult.item.fillColor = this.palette.currentFillColor();
-      hitResult.item.currentColor = this.palette.currentFillColor();
+    if (item.currentColor != this.palette.currentFillColor()) {
+      newColor = this.palette.currentFillColor();
     } else {
-      hitResult.item.fillColor = EMPTYCOLOR;
-      hitResult.item.currentColor = EMPTYCOLOR
+      newColor = EMPTYCOLOR;
+    }
+
+    if (fillAll) {
+      item.parent.children.forEach((path) => {
+        path.fillColor = newColor;
+        path.currentColor = newColor;
+      });
+    } else {
+      item.fillColor = newColor;
+      item.currentColor = newColor;
+    }
+  }
+
+  fillAll(point, item) {
+    switch(item._index) {
+      case 0:
+        return point.x > item.position.x;
+      case 1:
+        return point.y > item.position.y;
+      case 2:
+        return point.x < item.position.x;
+      case 3:
+        return point.y < item.position.y;
     }
   }
 
