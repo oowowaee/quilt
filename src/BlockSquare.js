@@ -12,9 +12,9 @@ export default class {
 
   drawTriangles() {
     var triangle = new paper.Path({
-      segments: [[this.x + 1, this.y + 1],
-                 [(this.x + this.width / 2) + 1, (this.y + this.width / 2) + 1],
-                 [this.x + 1, this.y + this.width + 1]]
+      segments: [[this.x - 1, this.y - 2],
+                 [(this.x + this.width / 2) + 1, (this.y + this.width / 2)],
+                 [this.x - 1, this.y + this.width + 2]]
     });
 
     var newt = triangle.clone();
