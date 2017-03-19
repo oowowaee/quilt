@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import BlockSquare from './BlockSquare';
+import QuiltBlock from './QuiltBlock';
 import BlockItemWithGrid from './BlockItemWithGrid';
 import paper from 'paper';
 import {FILLCOLOR, EMPTYCOLOR, OFFSET} from './Constants';
@@ -14,8 +14,7 @@ const hitOptions = {
 export default class extends BlockItemWithGrid {
   constructor(canvas, widthInBlocks, heightInBlocks, palette) {
     super(canvas, widthInBlocks, heightInBlocks, palette);
-    this.state = 'large';
-    this.addEvents();
+    //this.addEvents();
   }
 
   addEvents() {
@@ -26,20 +25,16 @@ export default class extends BlockItemWithGrid {
   }
 
   createSquare(i, j) {
-    return new BlockSquare(this.paper,
-                           this.squareWidth,
-                           this.squareWidth * i + OFFSET,
-                           this.squareWidth * j + OFFSET);
+    return new QuiltBlock(this.paper,
+                          this.squareWidth,
+                          this.squareWidth * i + OFFSET,
+                          this.squareWidth * j + OFFSET);
   }
 
   /*
     When we click inside the editor, color the corresponding triangle or square.
    */
   fillSquare(e) {
-    if (this.state === 'small') {
-      return;
-    }
-
     let hitResult = this.paper.project.hitTest(e.point, hitOptions);
     let newColor;
     let item = hitResult.item;
@@ -55,30 +50,5 @@ export default class extends BlockItemWithGrid {
     } else {
       item.changeColor(newColor);
     }
-  }
-
-  /*
-    Wipe all pattern from the grid squares.
-   */
-  empty(e) {
-    this.squares.forEach((square) => {
-      square.reset();
-    });
-  }
-
-  /*
-    Toggle the block editor between two sizes - small and large.
-   */
-  resize(e) {
-    if (this.state === 'large') {
-      this.state = 'small';
-      this.group.scale(0.25, new this.paper.Point(0, 0));
-    } else {
-      this.state = 'large';
-      this.group.scale(4, new this.paper.Point(0, 0));      
-    }
-
-    this.canvas.width = this.group.bounds.width;
-    this.canvas.height = this.group.bounds.height;
   }
 }

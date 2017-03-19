@@ -8,11 +8,12 @@ import Triangle from './Triangle';
   four triangles.
  */
 export default class BlockSquare extends paper.Group {
-  constructor(widthInPixels, x, y) {
+  constructor(paperInstance, widthInPixels, x, y) {
     super();
     this.x = x;
     this.y = y;
     this.width = widthInPixels;
+    this.paper = paperInstance;
     this.drawTriangles();
   }
 
@@ -45,15 +46,15 @@ export default class BlockSquare extends paper.Group {
 
     var newt = triangle.clone();
     newt.rotate(90);
-    newt.position = new paper.Point(this.x + this.width / 2 , this.y + this.width / 4);
+    newt.position = new this.paper.Point(this.x + this.width / 2 , this.y + this.width / 4);
 
     var newt2 = triangle.clone();
     newt2.rotate(180);
-    newt2.position = new paper.Point(this.x + this.width * 3/4, this.y + this.width / 2);
+    newt2.position = new this.paper.Point(this.x + this.width * 3/4, this.y + this.width / 2);
 
     var newt3 = triangle.clone();
     newt3.rotate(270);
-    newt3.position = new paper.Point(this.x + this.width / 2, this.y + this.width * 3 / 4);
+    newt3.position = new this.paper.Point(this.x + this.width / 2, this.y + this.width * 3 / 4);
 
     this.addChildren([triangle, newt, newt2, newt3]);
     this.fillColor = EMPTYCOLOR;
