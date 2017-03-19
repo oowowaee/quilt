@@ -65,7 +65,6 @@ export default class {
     let hitResult = paper.project.hitTest(e.point, hitOptions);
     let newColor;
     let item = hitResult.item;
-    let fillAll = this.fillAll(e.point, item);
 
     if (item.currentColor != this.palette.currentFillColor()) {
       newColor = this.palette.currentFillColor();
@@ -73,27 +72,10 @@ export default class {
       newColor = EMPTYCOLOR;
     }
 
-    if (fillAll) {
-      item.parent.children.forEach((path) => {
-        path.fillColor = newColor;
-        path.currentColor = newColor;
-      });
+    if (item.outsideRange(e.point)) {
+      item.parent.changeColors(newColor);
     } else {
-      item.fillColor = newColor;
-      item.currentColor = newColor;
-    }
-  }
-
-  fillAll(point, item) {
-    switch(item._index) {
-      case 0:
-        return point.x > item.position.x;
-      case 1:
-        return point.y > item.position.y;
-      case 2:
-        return point.x < item.position.x;
-      case 3:
-        return point.y < item.position.y;
+      item.changeColor(newColor);
     }
   }
 

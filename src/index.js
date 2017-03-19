@@ -3,8 +3,8 @@ import BlockEditor from './BlockEditor';
 import ColorPalette from './ColorPalette';
 require("./style.css");
 
-const numBlocksWide = 2;
-const numBlocksHigh = 2;
+const numBlocksWide = 4;
+const numBlocksHigh = 4;
 
 var currentFillColor = 'purple';
 
