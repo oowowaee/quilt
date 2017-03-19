@@ -3,6 +3,10 @@ import paper from 'paper';
 import {EMPTYCOLOR} from './Constants';
 import Triangle from './Triangle';
 
+/*
+  Represents one grid square in our quilt block, which is made up of
+  four triangles.
+ */
 export default class BlockSquare extends paper.Group {
   constructor(widthInPixels, x, y) {
     super();
@@ -12,6 +16,9 @@ export default class BlockSquare extends paper.Group {
     this.drawTriangles();
   }
 
+  /*
+    Change the color of all child triangles to new color.
+   */
   changeColors(newColor) {
     this.children.forEach((path) => {
       path.fillColor = newColor;
@@ -19,6 +26,16 @@ export default class BlockSquare extends paper.Group {
     });
   }
 
+  /*
+    Change all child triangles back to the empty color.
+   */
+  reset() {
+    this.changeColors(EMPTYCOLOR);
+  }
+
+  /*
+    Draw four triangles into this block.
+   */
   drawTriangles() {
     var triangle = new Triangle({
       segments: [[this.x, this.y],

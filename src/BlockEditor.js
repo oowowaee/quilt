@@ -21,6 +21,9 @@ export default class {
     this.height = canvas.offsetHeight;
     this.palette = palette;
     this.squareWidth = Math.floor(this.width / widthInBlocks);
+    this.state = 'large';
+    this.squares = [];
+
     if (this.squareWidth % 2 != 0) {
       this.squareWidth++;
     }
@@ -28,9 +31,11 @@ export default class {
 
   setup() {
     paper.setup(document.getElementById('block_canvas'));
+    this.group = new paper.Layer();
+
     this.createSquares();
-    this.drawGrid();
-    paper.view.draw();
+    this.grid = new Grid(this.width, this.height, this.widthInBlocks, this.heightInBlocks);
+    this.group.addChild(this.grid);
 
     var hitTool = new paper.Tool();
     hitTool.activate();
@@ -38,29 +43,9 @@ export default class {
     hitTool.onMouseDown = (e) => { this.fillSquare(e) };
   }
 
-  drawGrid() {
-    let gridLayer = new paper.Layer();
-
-    let verticalLine = new paper.Path.Line(new paper.Point(0, 0),
-                                           new paper.Point(0, this.height));
-    let horizontalLine = new paper.Path.Line(new paper.Point(0, 0),
-                                           new paper.Point(this.width, 0));
-    horizontalLine.strokeColor = 'gray';
-    verticalLine.strokeColor = 'gray';
-
-    let horizontalLineSymbol = new paper.Symbol(verticalLine);
-    for (var i = 1; i < this.widthInBlocks; i++) {
-      let point = new paper.Point(i * this.squareWidth, this.height / 2);
-      let line = gridLayer.addChild(horizontalLineSymbol.place(point));
-    }
-
-    let verticalLineSymbol = new paper.Symbol(horizontalLine);
-    for (var i = 1; i < this.heightInBlocks; i++) {
-      let point = new paper.Point(this.width / 2, i * this.squareWidth);
-      let line = gridLayer.addChild(verticalLineSymbol.place(point))
-    }
-  }
-
+  /*
+    When we click inside the editor, color the corresponding triangle or square.
+   */
   fillSquare(e) {
     let hitResult = paper.project.hitTest(e.point, hitOptions);
     let newColor;
@@ -79,13 +64,43 @@ export default class {
     }
   }
 
+  /*
+    Wipe all pattern from the grid squares.
+   */
+  empty(e) {
+    this.squares.forEach((square) => {
+      square.reset();
+    });
+  }
+
+  /*
+    Toggle the block editor between two sizes - small and large.
+   */
+  resize(e) {
+    if (this.state === 'large') {
+      this.state = 'small';
+      this.group.scale(0.25, new paper.Point(0, 0));
+    } else {
+      this.state = 'large';
+      this.group.scale(4, new paper.Point(0, 0));      
+    }
+
+    this.canvas.width = this.group.bounds.width;
+    this.canvas.height = this.group.bounds.height;
+  }
+
+  /*
+    Draw the individual grid squares to our block editor.
+   */
   createSquares() {
     for (var i = 0; i < this.widthInBlocks; i++) {
       for (var j = 0; j < this.heightInBlocks; j++) {
-        let block = new BlockSquare(this.squareWidth,
-                        this.squareWidth * i + offset,
-                        this.squareWidth * j + offset);
+        this.squares.push(new BlockSquare(this.squareWidth,
+                            this.squareWidth * i + offset,
+                            this.squareWidth * j + offset));
       }
     }
+
+    this.group.addChildren(this.squares);
   }
 }

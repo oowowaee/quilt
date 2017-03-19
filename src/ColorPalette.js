@@ -26,7 +26,6 @@ export default class {
 
     palette.setup(canvas);
     this.buildColors(colorSize);
-    palette.view.draw();
 
     var hitTool = new palette.Tool();
     hitTool.activate();
