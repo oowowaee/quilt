@@ -1,7 +1,8 @@
 import $ from 'jquery';
-import BlockEditor from './BlockEditor';
+import paper from 'paper';
+import BlockEditor from './blockeditor/BlockEditor';
 import ColorPalette from './ColorPalette';
-import Quilt from './Quilt';
+import QuiltEditor from './quilteditor/QuiltEditor';
 require("./style.css");
 
 const editorBlocksWide = 4;
@@ -16,18 +17,31 @@ window.onload = function() {
   const quiltCanvas = document.getElementById('quilt_canvas');
 
   var colorPalette = new ColorPalette(paletteCanvas);
-  var blockEditor = new BlockEditor(blockCanvas, editorBlocksWide, editorBlocksHigh, colorPalette);
-  blockEditor.resize();
 
-  var quilt = new Quilt(quiltCanvas, quiltBlocksWide, quiltBlocksHigh, colorPalette);
+  const blockEditorScope = new paper.PaperScope();
+  blockEditorScope.setup(blockCanvas);
 
+  var blockEditor = new BlockEditor(blockEditorScope, blockCanvas, editorBlocksWide, editorBlocksHigh, colorPalette);
+  //blockEditor.resize();
+
+  const quiltScope = new paper.PaperScope();
+  quiltScope.setup(quiltCanvas);
+
+  var quiltEditor = new QuiltEditor(quiltScope, quiltCanvas, quiltBlocksWide, quiltBlocksHigh, colorPalette, 500);
+
+  /*
+    When clicking the resize link, toggle the size of the block editor, and hide/show the quilt itself.
+   */
   $('#resize_link').on('click', (e) => {
     blockEditor.resize(e);
     $(quiltCanvas).toggle();
+    return false;
   });
 
-  //$('#clear_link').on('click', (e) => blockEditor.empty(e));
+  $('#clear_link').on('click', (e) => blockEditor.empty(e));
 
-  //paper.setup($('#block_canvas'));
-  //paper.setup(document.getElementById('block_canvas'));
+  $('#build_link').on('click', (e) => {
+    quiltEditor.addBlock(blockEditor);
+    return false;
+  });
 }

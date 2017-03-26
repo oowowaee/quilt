@@ -1,8 +1,10 @@
 import $ from 'jquery';
 import BlockSquare from './BlockSquare';
-import BlockItemWithGrid from './BlockItemWithGrid';
+import BlockItemWithGrid from '../BlockItemWithGrid';
 import paper from 'paper';
-import {FILLCOLOR, EMPTYCOLOR, OFFSET} from './Constants';
+import _ from 'underscore';
+
+import {FILLCOLOR, EMPTYCOLOR, OFFSET} from '../Constants';
 
 const hitOptions = {
   segments: true,
@@ -12,22 +14,42 @@ const hitOptions = {
 };
 
 export default class extends BlockItemWithGrid {
-  constructor(canvas, widthInBlocks, heightInBlocks, palette) {
+  constructor(scope, canvas, widthInBlocks, heightInBlocks, palette) {
     super(canvas, widthInBlocks, heightInBlocks, palette);
+    this.scope = scope;
     this.state = 'large';
-    this.addEvents();
-  }
 
-  addEvents() {
-    var hitTool = new this.paper.Tool();
+    var hitTool = new this.scope.Tool();
     hitTool.activate();
 
     hitTool.onMouseDown = (e) => { this.fillSquare(e) };
   }
 
-  createSquare(i, j) {
-    return new BlockSquare(this.paper,
-                           this.squareWidth,
+  /*
+    An object with colors as keys, whose values are all the shapes in the pattern matching that color. 
+  */
+  get colorComponents() {
+    let colors = {};
+
+    this.squares.forEach((square) => {
+      let components = square.componentsByColor;
+
+      if (!_.isEmpty(components)) {
+        for (let color in components) {
+          if (_.has(colors, color)) {
+            colors[color] = colors[color].concat(components[color]);
+          } else {
+            colors[color] = components[color];
+          }
+        };
+      }
+    });
+
+    return colors;
+  }
+
+  _createSquare(i, j) {
+    return new BlockSquare(this.squareWidth,
                            this.squareWidth * i + OFFSET,
                            this.squareWidth * j + OFFSET);
   }
@@ -40,7 +62,7 @@ export default class extends BlockItemWithGrid {
       return;
     }
 
-    let hitResult = this.paper.project.hitTest(e.point, hitOptions);
+    let hitResult = this.scope.project.hitTest(e.point, hitOptions);
     let newColor;
     let item = hitResult.item;
 
@@ -72,13 +94,23 @@ export default class extends BlockItemWithGrid {
   resize(e) {
     if (this.state === 'large') {
       this.state = 'small';
-      this.group.scale(0.25, new this.paper.Point(0, 0));
+      this.layer.scale(0.2, new paper.Point(0, 0));
     } else {
       this.state = 'large';
-      this.group.scale(4, new this.paper.Point(0, 0));      
+      this.layer.scale(5, new paper.Point(0, 0));      
     }
 
-    this.canvas.width = this.group.bounds.width;
-    this.canvas.height = this.group.bounds.height;
+    this.canvas.width = this.layer.bounds.width;
+    this.canvas.height = this.layer.bounds.height;
+  }
+
+  _toArray() {
+    let rep = [];
+
+    this.squares.forEach((square) => {
+      rep.push(square.toArray());
+    });
+
+    return rep;
   }
 }

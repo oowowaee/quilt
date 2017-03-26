@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import paper from 'paper';
-import Triangle from './Triangle';
-import {EMPTYCOLOR} from './Constants';
+import {EMPTYCOLOR} from '../Constants';
 
 /*
   Represents one grid square in our quilt block, which is made up of
@@ -14,6 +13,10 @@ export default class QuiltBlock extends paper.Group {
     this.y = y;
     this.width = widthInPixels;
     this.drawTriangles();
+  }
+
+  copyBlock(pattern) {
+
   }
 
   /*

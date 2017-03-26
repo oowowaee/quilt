@@ -21,6 +21,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "paper": "^0.10.3"
+    "paper": "^0.10.3",
+    "underscore": "^1.8.3"
   }
 }
